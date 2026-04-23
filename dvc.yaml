@@ -1,0 +1,21 @@
+stages:
+  preprocess:
+    cmd: jupyter nbconvert --to notebook --execute notebooks/03_data_preprocessing.ipynb --output 03_data_preprocessing.ipynb
+    deps:
+      - data/raw/healthcare-dataset-stroke-data.csv
+      - notebooks/03_data_preprocessing.ipynb
+      - params.yaml
+    params:
+      - dataset
+      - preprocessing
+    outs:
+      - data/processed/train.csv
+      - data/processed/val.csv
+      - data/processed/test.csv
+      - data/processed/tabnet_ready.npz
+      - data/processed/scaler.joblib
+      - data/processed/encoders.json
+      - data/processed/tabnet_meta.json
+    metrics:
+      - metadata/03_preprocessing.json:
+          cache: false

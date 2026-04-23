@@ -1,0 +1,76 @@
+{
+  "steps": [
+    "drop_id",
+    "impute_bmi_median",
+    "remove_gender_other",
+    "iqr_cap_outliers",
+    "label_encode_categoricals",
+    "stratified_split",
+    "standard_scale_numeric",
+    "smote_train_only"
+  ],
+  "imputation": {
+    "bmi": 28.1
+  },
+  "iqr_cap": {
+    "age": {
+      "lower": -29.0,
+      "upper": 115.0
+    },
+    "avg_glucose_level": {
+      "lower": 21.964999999999982,
+      "upper": 169.365
+    },
+    "bmi": {
+      "lower": 10.300000000000006,
+      "upper": 46.29999999999999
+    }
+  },
+  "encoders": {
+    "gender": {
+      "Female": 0,
+      "Male": 1
+    },
+    "ever_married": {
+      "No": 0,
+      "Yes": 1
+    },
+    "work_type": {
+      "Govt_job": 0,
+      "Never_worked": 1,
+      "Private": 2,
+      "Self-employed": 3,
+      "children": 4
+    },
+    "Residence_type": {
+      "Rural": 0,
+      "Urban": 1
+    },
+    "smoking_status": {
+      "Unknown": 0,
+      "formerly smoked": 1,
+      "never smoked": 2,
+      "smokes": 3
+    }
+  },
+  "split_sizes": {
+    "train_before_smote": 3575,
+    "train_after_smote": 5100,
+    "val": 767,
+    "test": 767
+  },
+  "scaler": {
+    "type": "StandardScaler",
+    "mean": [
+      43.39061258741259,
+      101.05807692307692,
+      28.635664335664334
+    ],
+    "scale": [
+      22.81952610674956,
+      33.10168091417312,
+      7.062883240118954
+    ]
+  },
+  "random_state": 42
+}

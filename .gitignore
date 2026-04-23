@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data - dilacak oleh DVC, bukan Git
+data/raw/*.csv
+data/interim/*
+data/processed/*
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+
+# DVC
+/.dvc/cache
+/.dvc/tmp
+/.dvc/plots
+*.dvc.lock
+
+# Model artefak
+*.pt
+*.pkl
+*.joblib
+
+# OS
+.DS_Store
+Thumbs.db

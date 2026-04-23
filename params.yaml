@@ -1,0 +1,47 @@
+dataset:
+  name: healthcare-dataset-stroke-data
+  source: "Kaggle - fedesoriano/stroke-prediction-dataset"
+  target: stroke
+  random_state: 42
+
+preprocessing:
+  missing_strategy:
+    bmi: median
+    smoking_status: keep_unknown
+  drop_columns:
+    - id
+  categorical_features:
+    - gender
+    - ever_married
+    - work_type
+    - Residence_type
+    - smoking_status
+  numeric_features:
+    - age
+    - avg_glucose_level
+    - bmi
+  binary_features:
+    - hypertension
+    - heart_disease
+  outlier:
+    method: iqr_cap
+    whisker: 1.5
+  scaling: standard
+  balance:
+    method: smote
+    sampling_strategy: 0.5
+  split:
+    test_size: 0.15
+    val_size: 0.15
+    stratify: true
+
+tabnet:
+  n_d: 16
+  n_a: 16
+  n_steps: 5
+  gamma: 1.5
+  lambda_sparse: 1.0e-4
+  max_epochs: 200
+  patience: 25
+  batch_size: 1024
+  virtual_batch_size: 128
