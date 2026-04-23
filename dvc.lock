@@ -1,0 +1,88 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: jupyter nbconvert --to notebook --execute 
+      notebooks/03_data_preprocessing.ipynb --output 03_data_preprocessing.ipynb
+    deps:
+    - path: data/raw/healthcare-dataset-stroke-data.csv
+      hash: md5
+      md5: 3f25a4c2f2963d969e1a156c08968577
+      size: 316971
+    - path: notebooks/03_data_preprocessing.ipynb
+      hash: md5
+      md5: b45eaef370f4d0533cbc1b6e976f0580
+      size: 34776
+    - path: params.yaml
+      hash: md5
+      md5: 182df69b4abee369f83e39370dae8079
+      size: 837
+    params:
+      params.yaml:
+        dataset:
+          name: healthcare-dataset-stroke-data
+          source: Kaggle - fedesoriano/stroke-prediction-dataset
+          target: stroke
+          random_state: 42
+        preprocessing:
+          missing_strategy:
+            bmi: median
+            smoking_status: keep_unknown
+          drop_columns:
+          - id
+          categorical_features:
+          - gender
+          - ever_married
+          - work_type
+          - Residence_type
+          - smoking_status
+          numeric_features:
+          - age
+          - avg_glucose_level
+          - bmi
+          binary_features:
+          - hypertension
+          - heart_disease
+          outlier:
+            method: iqr_cap
+            whisker: 1.5
+          scaling: standard
+          balance:
+            method: smote
+            sampling_strategy: 0.5
+          split:
+            test_size: 0.15
+            val_size: 0.15
+            stratify: true
+    outs:
+    - path: data/processed/encoders.json
+      hash: md5
+      md5: 20077c109c05cc4192eae3371a92e2c3
+      size: 395
+    - path: data/processed/scaler.joblib
+      hash: md5
+      md5: e78219e23c0c2777d835f5986725e159
+      size: 927
+    - path: data/processed/tabnet_meta.json
+      hash: md5
+      md5: a4291cd7e6e3caad91ec47db779ebeda
+      size: 694
+    - path: data/processed/tabnet_ready.npz
+      hash: md5
+      md5: eda83701901e115ae314aa3ef90e6c95
+      size: 69471
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 5cfcdb15711f9adad9f5077e2f07b042
+      size: 57708
+    - path: data/processed/train.csv
+      hash: md5
+      md5: ae52cdb8de8a082a7bad90241b1f24b0
+      size: 381698
+    - path: data/processed/val.csv
+      hash: md5
+      md5: 06d52e2a96505a85df835bbf163e6c5a
+      size: 57648
+    - path: metadata/03_preprocessing.json
+      hash: md5
+      md5: 610c3e1235a45c4e6332300e0d48fc01
+      size: 1367
