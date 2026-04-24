@@ -1,7 +1,5 @@
 # Klasifikasi Tingkat Risiko Stroke Berdasarkan Data Klinis dan Gaya Hidup Menggunakan Algoritma TabNet dengan Interpretasi Attention Mechanism
 
-## Identitas
-
 - **Nama**: Muhammad Ridho Ramadhan
 - **NIM**: 23.11.5772
 - **Dosen**: Anna Baita, S.Kom., M.Kom.
