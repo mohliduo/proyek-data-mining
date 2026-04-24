@@ -1,0 +1,4 @@
+[core]
+    remote = main
+['remote "main"']
+    url = ../gdrive:1uocrf56NUYKbK6aIleB8SjS8S9HnPGGe
