@@ -12,10 +12,6 @@ stages:
       hash: md5
       md5: b45eaef370f4d0533cbc1b6e976f0580
       size: 34776
-    - path: params.yaml
-      hash: md5
-      md5: 182df69b4abee369f83e39370dae8079
-      size: 837
     params:
       params.yaml:
         dataset:
@@ -86,3 +82,202 @@ stages:
       hash: md5
       md5: 610c3e1235a45c4e6332300e0d48fc01
       size: 1367
+  data_collection:
+    cmd: jupyter nbconvert --to notebook --execute 
+      notebooks/01_data_collection.ipynb --output 01_data_collection.ipynb
+    deps:
+    - path: data/raw/healthcare-dataset-stroke-data.csv
+      hash: md5
+      md5: 3f25a4c2f2963d969e1a156c08968577
+      size: 316971
+    - path: notebooks/01_data_collection.ipynb
+      hash: md5
+      md5: a38f63b2c4510021b48799a8f574d62e
+      size: 22581
+    outs:
+    - path: metadata/01_data_collection.json
+      hash: md5
+      md5: ef898e3754de73c4295b83629ecbf5be
+      size: 1800
+  eda:
+    cmd: jupyter nbconvert --to notebook --execute notebooks/02_eda.ipynb 
+      --output 02_eda.ipynb
+    deps:
+    - path: data/raw/healthcare-dataset-stroke-data.csv
+      hash: md5
+      md5: 3f25a4c2f2963d969e1a156c08968577
+      size: 316971
+    - path: notebooks/02_eda.ipynb
+      hash: md5
+      md5: 8c397aa14951eff777aae305c38fcbf4
+      size: 1522810
+    outs:
+    - path: reports/figures/bivariate_cat_vs_stroke.png
+      hash: md5
+      md5: a366504ccd2a3d791cb30a85c91d7dca
+      size: 100322
+    - path: reports/figures/bivariate_num_vs_stroke.png
+      hash: md5
+      md5: c16563dbbf329518fff96e326e7d7dbb
+      size: 33762
+    - path: reports/figures/correlation_matrix.png
+      hash: md5
+      md5: c65bc6be886e0895a6e416b5b47c9759
+      size: 55443
+    - path: reports/figures/missing_values.png
+      hash: md5
+      md5: 5de7f11c2ec4b13ecf6a230ffe79ea01
+      size: 29333
+    - path: reports/figures/pairplot_numeric.png
+      hash: md5
+      md5: f36f039ad8c978f6a817e9f09f2097e2
+      size: 312915
+    - path: reports/figures/risk_by_age.png
+      hash: md5
+      md5: 80cd1c2cef73c6733797e4184792c603
+      size: 24958
+    - path: reports/figures/scatter_age_glucose_stroke.png
+      hash: md5
+      md5: b16d131961cd9d20e5b40827c6c50692
+      size: 350581
+    - path: reports/figures/univariate_categorical.png
+      hash: md5
+      md5: 1242b3c7dd23937b967b2559da8679a1
+      size: 114222
+    - path: reports/figures/univariate_numeric.png
+      hash: md5
+      md5: 5f8f1b2e8f24d58c546ca66d422a9202
+      size: 80817
+  modeling:
+    cmd: OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python -m src.retrain
+    deps:
+    - path: data/processed/tabnet_meta.json
+      hash: md5
+      md5: a4291cd7e6e3caad91ec47db779ebeda
+      size: 694
+    - path: data/processed/tabnet_ready.npz
+      hash: md5
+      md5: eda83701901e115ae314aa3ef90e6c95
+      size: 69471
+    - path: src/__init__.py
+      hash: md5
+      md5: d41d8cd98f00b204e9800998ecf8427e
+      size: 0
+    - path: src/retrain.py
+      hash: md5
+      md5: e5b53f4e8aec13782e0c038018e89cec
+      size: 15407
+    params:
+      params.yaml:
+        baselines:
+          logreg:
+            C: 1.0
+            max_iter: 1000
+            class_weight: balanced
+            solver: liblinear
+          random_forest:
+            n_estimators: 300
+            max_depth: 12
+            min_samples_split: 5
+            class_weight: balanced
+            n_jobs: -1
+          xgboost:
+            n_estimators: 400
+            max_depth: 6
+            learning_rate: 0.05
+            subsample: 0.9
+            colsample_bytree: 0.9
+            eval_metric: auc
+            use_label_encoder: false
+        dataset:
+          name: healthcare-dataset-stroke-data
+          source: Kaggle - fedesoriano/stroke-prediction-dataset
+          target: stroke
+          random_state: 42
+        mlflow:
+          experiment_name: stroke-risk-classification
+          tracking_db: mlflow.db
+          primary_metric: val_pr_auc
+        tabnet:
+          n_d: 16
+          n_a: 16
+          n_steps: 5
+          gamma: 1.5
+          lambda_sparse: 0.0001
+          max_epochs: 200
+          patience: 25
+          batch_size: 1024
+          virtual_batch_size: 128
+    outs:
+    - path: metadata/05_modeling_summary.json
+      hash: md5
+      md5: ced1b471b7581518fa0b713b803b8678
+      size: 3881
+    - path: models/best_model
+      hash: md5
+      md5: 87ebff6d09d1138ffc7b0872e58b3880.dir
+      size: 23414
+      nfiles: 7
+    - path: models/best_model.json
+      hash: md5
+      md5: 64ec8c19f9a57a2c7279509f5bd1c96b
+      size: 917
+    - path: models/tabnet
+      hash: md5
+      md5: 367805e628474f018900c3f2e3b7a10c.dir
+      size: 144045
+      nfiles: 1
+    - path: reports/figures/cm_logreg_test.png
+      hash: md5
+      md5: 07e1629f26e3681919813a94ef88ff1b
+      size: 21319
+    - path: reports/figures/cm_randomforest_test.png
+      hash: md5
+      md5: aa8f691b72a94159dd686013982a85dd
+      size: 21029
+    - path: reports/figures/cm_tabnet_test.png
+      hash: md5
+      md5: 6ec628d753b3cbd76c9b8e334a072664
+      size: 20942
+    - path: reports/figures/cm_xgboost_test.png
+      hash: md5
+      md5: 9dc32f3d25e70f673ab8b48def4bc822
+      size: 21556
+  evaluate:
+    cmd: DVC_STAGE=evaluate jupyter nbconvert --to notebook --execute 
+      notebooks/06_best_model.ipynb --output 06_best_model.ipynb
+    deps:
+    - path: data/processed/tabnet_ready.npz
+      hash: md5
+      md5: eda83701901e115ae314aa3ef90e6c95
+      size: 69471
+    - path: metadata/05_modeling_summary.json
+      hash: md5
+      md5: ced1b471b7581518fa0b713b803b8678
+      size: 3881
+    - path: models/best_model
+      hash: md5
+      md5: 87ebff6d09d1138ffc7b0872e58b3880.dir
+      size: 23414
+      nfiles: 7
+    - path: models/best_model.json
+      hash: md5
+      md5: 64ec8c19f9a57a2c7279509f5bd1c96b
+      size: 917
+    - path: notebooks/06_best_model.ipynb
+      hash: md5
+      md5: 6148a9f7e377b0032c47d88892a176be
+      size: 164686
+    outs:
+    - path: reports/figures/best_model_evaluation.png
+      hash: md5
+      md5: cc7b6afd9ab1bb30054acaea3f1d36e0
+      size: 54739
+    - path: reports/figures/best_model_highlight.png
+      hash: md5
+      md5: 1a516e7bdc68e906b84def2811158fa9
+      size: 36986
+    - path: reports/figures/model_comparison.png
+      hash: md5
+      md5: bfa830408210f034f16f029361ab69a2
+      size: 47797

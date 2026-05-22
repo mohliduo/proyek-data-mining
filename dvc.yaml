@@ -1,10 +1,46 @@
 stages:
+  # =========================================================
+  # Stage 1 — Data Collection
+  # Validasi integritas dataset (hash SHA-256) + simpan metadata
+  # =========================================================
+  data_collection:
+    cmd: jupyter nbconvert --to notebook --execute notebooks/01_data_collection.ipynb --output 01_data_collection.ipynb
+    deps:
+      - data/raw/healthcare-dataset-stroke-data.csv
+      - notebooks/01_data_collection.ipynb
+    metrics:
+      - metadata/01_data_collection.json:
+          cache: false
+
+  # =========================================================
+  # Stage 2 — Exploratory Data Analysis
+  # Visualisasi univariate, bivariate, korelasi, outlier
+  # =========================================================
+  eda:
+    cmd: jupyter nbconvert --to notebook --execute notebooks/02_eda.ipynb --output 02_eda.ipynb
+    deps:
+      - data/raw/healthcare-dataset-stroke-data.csv
+      - notebooks/02_eda.ipynb
+    outs:
+      - reports/figures/missing_values.png
+      - reports/figures/univariate_numeric.png
+      - reports/figures/univariate_categorical.png
+      - reports/figures/bivariate_num_vs_stroke.png
+      - reports/figures/bivariate_cat_vs_stroke.png
+      - reports/figures/correlation_matrix.png
+      - reports/figures/pairplot_numeric.png
+      - reports/figures/scatter_age_glucose_stroke.png
+      - reports/figures/risk_by_age.png
+
+  # =========================================================
+  # Stage 3 — Preprocessing
+  # Imputasi, outlier capping, encoding, scaling, SMOTE, split
+  # =========================================================
   preprocess:
     cmd: jupyter nbconvert --to notebook --execute notebooks/03_data_preprocessing.ipynb --output 03_data_preprocessing.ipynb
     deps:
       - data/raw/healthcare-dataset-stroke-data.csv
       - notebooks/03_data_preprocessing.ipynb
-      - params.yaml
     params:
       - dataset
       - preprocessing
@@ -19,3 +55,51 @@ stages:
     metrics:
       - metadata/03_preprocessing.json:
           cache: false
+
+  # =========================================================
+  # Stage 4 — Modeling
+  # Train 4 model (LogReg, RF, XGBoost, TabNet) dengan
+  # RandomizedSearchCV + class balancing + threshold tuning
+  # =========================================================
+  modeling:
+    cmd: OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python -m src.retrain
+    deps:
+      - data/processed/tabnet_ready.npz
+      - data/processed/tabnet_meta.json
+      - src/retrain.py
+      - src/__init__.py
+    params:
+      - dataset
+      - tabnet
+      - baselines
+      - mlflow
+    outs:
+      - models/best_model
+      - models/tabnet
+      - reports/figures/cm_logreg_test.png
+      - reports/figures/cm_randomforest_test.png
+      - reports/figures/cm_xgboost_test.png
+      - reports/figures/cm_tabnet_test.png
+      - models/best_model.json:
+          cache: false
+    metrics:
+      - metadata/05_modeling_summary.json:
+          cache: false
+
+  # =========================================================
+  # Stage 5 — Evaluation
+  # Bandingkan model di MLflow, plot leaderboard + best highlight,
+  # load best model dari models/best_model/ dan evaluasi di test set
+  # =========================================================
+  evaluate:
+    cmd: DVC_STAGE=evaluate jupyter nbconvert --to notebook --execute notebooks/06_best_model.ipynb --output 06_best_model.ipynb
+    deps:
+      - notebooks/06_best_model.ipynb
+      - models/best_model
+      - models/best_model.json
+      - metadata/05_modeling_summary.json
+      - data/processed/tabnet_ready.npz
+    outs:
+      - reports/figures/model_comparison.png
+      - reports/figures/best_model_highlight.png
+      - reports/figures/best_model_evaluation.png

@@ -32,6 +32,20 @@ data/processed/*
 *.pkl
 *.joblib
 
+# MLflow & artefak modeling
+mlruns/
+mlflow.db
+models/
+!models/.gitkeep
+
+# Reports & metrics — dilacak oleh DVC, bukan Git
+reports/figures/*.png
+reports/*.csv
+metadata/*.json
+
 # OS
 .DS_Store
 Thumbs.db
+
+.claude
+ANALISIS_PROYEK.md
