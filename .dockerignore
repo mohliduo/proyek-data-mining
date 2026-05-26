@@ -1,0 +1,57 @@
+# Python
+
+**pycache**/
+_.py[cod]
+_.so
+.venv/
+venv/
+env/
+.env
+
+# Jupyter
+
+.ipynb_checkpoints/
+notebooks/
+\*.ipynb
+
+# Git & DVC internals
+
+.git/
+.dvc/cache/
+.dvc/tmp/
+\*.dvc
+
+# Data mentah & interim (tidak dipakai inference)
+
+data/raw/
+data/interim/
+data/processed/train.csv
+data/processed/val.csv
+data/processed/test.csv
+data/processed/tabnet_ready.npz
+
+# MLflow & eksperimen
+
+mlruns/
+mlflow.db
+models_old/
+
+# Reports & docs (tidak dipakai runtime)
+
+reports/
+docs/
+metadata/
+ANALISIS_PROYEK.md
+
+# OS junk
+
+.DS_Store
+Thumbs.db
+
+# Claude
+
+.claude/
+CLAUDE.md
+
+docs/
+deploy

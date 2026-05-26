@@ -1,0 +1,30 @@
+services:
+    api:
+        build: .
+        container_name: stroke-api
+        restart: unless-stopped
+        ports:
+            - '127.0.0.1:9000:9000'
+        environment:
+            - OMP_NUM_THREADS=1
+            - OPENBLAS_NUM_THREADS=1
+
+    ui:
+        build: .
+        container_name: stroke-ui
+        restart: unless-stopped
+        command: >
+            streamlit run src/app.py
+            --server.port=8501
+            --server.address=0.0.0.0
+            --server.headless=true
+            --server.enableXsrfProtection=true
+            --server.enableCORS=false
+            --browser.gatherUsageStats=false
+        ports:
+            - '127.0.0.1:8501:8501'
+        environment:
+            # UI memanggil API lewat docker DNS (container-to-container)
+            - STROKE_API_URL=http://api:9000
+        depends_on:
+            - api
