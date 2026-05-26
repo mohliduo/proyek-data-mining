@@ -9,12 +9,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Pasang dependency lebih dulu supaya layer cache efektif
+# Pasang dependency dengan optimasi ukuran image:
+#   1. Install torch CPU-only (hemat ~3.7 GB vs default GPU build)
+#   2. Exclude package yang tidak dipakai di production (jupyter/notebook/plotly/statsmodels)
 COPY requirements.txt .
-# Tidak butuh jupyter/notebook di production → exclude utk hemat image size
-RUN grep -vE '^(jupyter|ipykernel|notebook|matplotlib|seaborn|plotly|statsmodels)' requirements.txt > requirements-prod.txt \
-    && pip install --no-cache-dir -r requirements-prod.txt \
-    && pip install --no-cache-dir matplotlib seaborn  # tetap dipakai utk plot fallback bila ada
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
+    && grep -vE '^(jupyter|ipykernel|notebook|plotly|statsmodels|torch)' requirements.txt > requirements-prod.txt \
+    && pip install --no-cache-dir -r requirements-prod.txt
 
 # Copy kode + artefak model + scaler/encoder yg dibutuhkan untuk inference
 COPY src/ ./src/
