@@ -13,7 +13,7 @@
 
 services:
     api:
-        image: mohliduo/stroke-app:1.0.0
+        image: mohliduo/stroke-app:1.0.1
         # build: .       # uncomment untuk dev lokal
         container_name: stroke-api
         restart: unless-stopped
@@ -24,17 +24,13 @@ services:
             - OPENBLAS_NUM_THREADS=1
 
     ui:
-        image: mohliduo/stroke-app:1.0.0
+        image: mohliduo/stroke-app:1.0.1
         # build: .       # uncomment untuk dev lokal
         container_name: stroke-ui
         restart: unless-stopped
-        command: >
-            streamlit run src/app.py
-            --server.port=8501
-            --server.address=0.0.0.0
-            --server.headless=true
-            --server.enableXsrfProtection=true
-            --browser.gatherUsageStats=false
+        # Konfigurasi Streamlit (port/address/XSRF/WS) ada di .streamlit/config.toml
+        # yang sudah di-bake ke image — command jadi minimal.
+        command: streamlit run src/app.py
         ports:
             - '127.0.0.1:8501:8501'
         environment:

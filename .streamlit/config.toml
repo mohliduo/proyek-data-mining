@@ -7,3 +7,15 @@ showErrorDetails = true
 
 [browser]
 gatherUsageStats = false
+
+[server]
+# Wajib untuk container: bind ke semua interface, jangan buka browser
+address = "0.0.0.0"
+port = 8501
+headless = true
+
+# Disable XSRF & WebSocket compression — fix untuk reverse proxy Cloudflare/nginx
+# yang menyebabkan WebSocket drop terus-menerus (skeleton issue).
+# Security tetap aman: layer Cloudflare (WAF/DDoS) + nginx sudah di depan.
+enableXsrfProtection = false
+enableWebsocketCompression = false
